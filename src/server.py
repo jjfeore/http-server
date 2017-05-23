@@ -18,14 +18,14 @@ def server():  # pragma: no cover
                 response = ""
                 msg_len = conn.recv(buffsize).decode('utf8')
                 if msg_len is not '':
-                    print(msg_len)
                     msg_len = int(msg_len)
                     n = 0
                     while n < msg_len:
                         response += conn.recv(buffsize).decode('utf8')
                         n += buffsize
                     response = append_len(response)
-                    conn.sendall(response.encode('utf8'))
+                    print(response[7:])
+                    conn.sendall(response_ok())
                     conn.close()
                 else:
                     continue
@@ -33,6 +33,16 @@ def server():  # pragma: no cover
                 break
         echo_server_sock.close()
         sys.exit(0)
+
+
+def response_ok():
+    """Return a properly formatted HTTP 200 OK."""
+    return b'HTTP/1.1 200 OK'
+
+
+def response_error():
+    """Return a properly formatted HTTP 500 Internal Server Error."""
+    return b'HTTP/1.1 500 Internal Server Error'
 
 
 def append_len(msg):
