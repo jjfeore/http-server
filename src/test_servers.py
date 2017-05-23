@@ -23,20 +23,20 @@ TEST_APPEND = [
 ]
 
 
-@pytest.mark.parametrize('msg, result', TEST_ECHO)
+@pytest.mark.parametrize('msg', TEST_ECHO)
 def test_client(msg):
     """Take a msg,send it, return that same message."""
     from client import client
     assert client(msg) == 'HTTP/1.1 200 OK'
 
 
-def test_response_ok(msg):
+def test_response_ok():
     """Take a msg,send it, return that same message."""
     from server import response_ok
     assert response_ok() == 'HTTP/1.1 200 OK'
 
 
-def test_response_error(msg):
+def test_response_error():
     """Take a msg,send it, return that same message."""
     from server import response_error
     assert response_error() == 'HTTP/1.1 500 Internal Server Error'

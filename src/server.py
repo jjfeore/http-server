@@ -8,7 +8,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5005)
+        address = ('127.0.0.1', 5003)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
@@ -23,9 +23,9 @@ def server():  # pragma: no cover
                     while n < msg_len:
                         response += conn.recv(buffsize).decode('utf8')
                         n += buffsize
-                    response = append_len(response)
-                    print(response[7:])
-                    conn.sendall(response_ok())
+                    print(response)
+                    response = append_len(response_ok()).encode('utf8')
+                    conn.sendall(response)
                     conn.close()
                 else:
                     continue
@@ -37,12 +37,12 @@ def server():  # pragma: no cover
 
 def response_ok():
     """Return a properly formatted HTTP 200 OK."""
-    return b'HTTP/1.1 200 OK'
+    return 'HTTP/1.1 200 OK'
 
 
 def response_error():
     """Return a properly formatted HTTP 500 Internal Server Error."""
-    return b'HTTP/1.1 500 Internal Server Error'
+    return 'HTTP/1.1 500 Internal Server Error'
 
 
 def append_len(msg):
