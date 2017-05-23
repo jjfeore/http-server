@@ -5,6 +5,8 @@ import pytest
 
 TEST_ECHO = [
     ('Hey, how ya, doing?'),
+    ('Short'),
+    ('buffsize'),
     ('James Feore'),
     ('Ophelia Yin'),
     ('Testing testing testing'),
