@@ -19,7 +19,6 @@ def client(msg):
         response += cli_sock.recv(buffsize).decode('utf8')
         if response.endswith('\r\n\r\n'):
             keep_parsing = False
-    cli_sock.shutdown(socket.SHUT_RD)
     cli_sock.close()
     return response
 
