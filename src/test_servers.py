@@ -10,7 +10,9 @@ TEST_ECHO = [
     ('James Feore'),
     ('Ophelia Yin'),
     ('Testing testing testing'),
-    ('Here is a much longer one to test with. It\'s super long.')
+    ('Here is a much longer one to test with. It\'s super long.'),
+    ('!@#$^^&'),
+    ('words \r\n\r\n words')
 ]
 
 
