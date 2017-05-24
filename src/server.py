@@ -36,13 +36,17 @@ def response_ok(msg):
     return msg.encode('utf8')
 
 
-def response_error():
-    """Return a properly formatted HTTP 500 Internal Server Error."""
-    return b'HTTP/1.1 500 Internal Server Error\r\n\r\n'
+def response_error(code):
+    """Return a properly formatted HTTP error response."""
+    error_codes = {}
+    error_codes['400'] = '400 Bad Request'
+    error_codes['405'] = '405 Method Not Allowed'
+    error_codes['505'] = '505 HTTP Version Not Supported'
+    return 'HTTP/1.1 ' + error_codes[code] + '\r\n\r\n'
 
 
 def parse_request(request):
-    """Accepts only GET request return URI."""
+    """Parse a request and return either a good response or an error."""
     request = request.split("\r\n")
     if request[0].startswith('GET'):
         if request[0].endswith('HTTP/1.1'):
@@ -51,13 +55,17 @@ def parse_request(request):
                 if ret_msg:
                     return response_ok(ret_msg)
                 else:
-                    raise IOError()
+                    raise IOError('Bad request: Badly formatted')
+                    return response_error('400')
             else:
-                raise IOError()
+                raise IOError('Bad request: No Host specified')
+                return response_error('400')
         else:
-            raise IOError()
+            raise IOError('Bad request: Incorrect HTTP version specified')
+            return response_error('505')
     else:
-        raise IOError()
+        raise IOError('Bad request: Does not start with GET')
+        return response_error('405')
 
 
 if __name__ == "__main__":  # pragma: no cover
