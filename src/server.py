@@ -22,7 +22,7 @@ def server():  # pragma: no cover
                     if response == '' or response.endswith('\r\n\r\n'):
                         keep_parsing = False
                 print(response)
-                conn.sendall(response_ok())
+                conn.sendall(parse_request(response))
                 conn.close()
             except KeyboardInterrupt:
                 break
@@ -30,14 +30,34 @@ def server():  # pragma: no cover
         sys.exit(0)
 
 
-def response_ok():
+def response_ok(msg):
     """Return a properly formatted HTTP 200 OK."""
-    return b'HTTP/1.1 200 OK\r\n\r\n'
+    msg = 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n' + msg + '\r\n\r\n'
+    return msg.encode('utf8')
 
 
 def response_error():
     """Return a properly formatted HTTP 500 Internal Server Error."""
     return b'HTTP/1.1 500 Internal Server Error\r\n\r\n'
+
+
+def parse_request(request):
+    """Accepts only GET request return URI."""
+    request = request.split("\r\n")
+    if request[0].startswith('GET'):
+        if request[0].endswith('HTTP/1.1'):
+            if request[1].startswith('Host: '):
+                ret_msg = request[0].replace('GET ', '').replace(' HTTP/1.1', '')
+                if ret_msg:
+                    return response_ok(ret_msg)
+                else:
+                    raise IOError()
+            else:
+                raise IOError()
+        else:
+            raise IOError()
+    else:
+        raise IOError()
 
 
 if __name__ == "__main__":  # pragma: no cover
