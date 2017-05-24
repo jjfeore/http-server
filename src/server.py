@@ -8,7 +8,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5000)
+        address = ('127.0.0.1', 5002)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
@@ -22,8 +22,13 @@ def server():  # pragma: no cover
                     if response == '' or response.endswith('\r\n\r\n'):
                         keep_parsing = False
                 print(response)
-                conn.sendall(parse_request(response))
-                conn.close()
+                try:
+                    conn.sendall(parse_request(response))
+                    conn.close()
+                except ValueError as err:
+                    conn.sendall(response_error(err.args[0]))
+                    conn.close()
+                    pass
             except KeyboardInterrupt:
                 break
         echo_server_sock.close()
@@ -38,11 +43,7 @@ def response_ok(msg):
 
 def response_error(code):
     """Return a properly formatted HTTP error response."""
-    error_codes = {}
-    error_codes['400'] = '400 Bad Request'
-    error_codes['405'] = '405 Method Not Allowed'
-    error_codes['505'] = '505 HTTP Version Not Supported'
-    return 'HTTP/1.1 ' + error_codes[code] + '\r\n\r\n'
+    return ('HTTP/1.1 ' + code + '\r\n\r\n').encode('utf8')
 
 
 def parse_request(request):
@@ -55,17 +56,13 @@ def parse_request(request):
                 if ret_msg:
                     return response_ok(ret_msg)
                 else:
-                    raise IOError('Bad request: Badly formatted')
-                    return response_error('400')
+                    raise ValueError('400 Bad Request')
             else:
-                raise IOError('Bad request: No Host specified')
-                return response_error('400')
+                raise ValueError('400 Bad Request')
         else:
-            raise IOError('Bad request: Incorrect HTTP version specified')
-            return response_error('505')
+            raise ValueError('505 HTTP Version Not Supported')
     else:
-        raise IOError('Bad request: Does not start with GET')
-        return response_error('405')
+        raise ValueError('405 Method Not Allowed')
 
 
 if __name__ == "__main__":  # pragma: no cover

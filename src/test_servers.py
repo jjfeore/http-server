@@ -23,9 +23,9 @@ TEST_OK = [
 
 
 TEST_ERROR = [
-    ('400', 'HTTP/1.1 400 Bad Request\r\n\r\n'),
-    ('405', 'HTTP/1.1 405 Method Not Allowed\r\n\r\n'),
-    ('505', 'HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n')
+    ('400 Bad Request', 'HTTP/1.1 400 Bad Request\r\n\r\n'),
+    ('405 Method Not Allowed', 'HTTP/1.1 405 Method Not Allowed\r\n\r\n'),
+    ('505 HTTP Version Not Supported', 'HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n')
 ]
 
 
@@ -47,11 +47,11 @@ def test_parse_request(msg, result):
 def test_response_ok(msg, result):
     """Take a msg,send it, return that same message."""
     from server import response_ok
-    assert response_ok(msg) == result
+    assert response_ok(msg) == result.encode('utf8')
 
 
 @pytest.mark.parametrize('msg, result', TEST_ERROR)
 def test_response_error(msg, result):
     """Pass in an error and receive the appropriate response."""
     from server import response_error
-    assert response_error(msg) == result
+    assert response_error(msg) == result.encode('utf8')

@@ -6,7 +6,7 @@ import socket
 
 def client(msg):
     """Send server a message, receives another msg, and returns it."""
-    infos = socket.getaddrinfo('127.0.0.1', 5000)
+    infos = socket.getaddrinfo('127.0.0.1', 5002)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
     cli_sock = socket.socket(*stream_info[:3])
     cli_sock.connect(stream_info[-1])
