@@ -1,7 +1,6 @@
 """Build Echo Server."""
 import socket
 import sys
-import io
 from os import listdir
 
 
@@ -32,6 +31,9 @@ def server():  # pragma: no cover
                 except ValueError as err:
                     conn.sendall(response_error(err.args[0]))
                     conn.close()
+                except NameError as err:
+                    conn.sendall(response_error(err.args[0]))
+                    conn.close()
             except KeyboardInterrupt:
                 break
         echo_server_sock.close()
@@ -41,7 +43,7 @@ def server():  # pragma: no cover
 def response_ok(msg):
     """Return a properly formatted HTTP 200 OK."""
     body = resolve_uri(msg)
-    if msg.lower().endswith(".html") or not msg.includes("."):
+    if msg.lower().endswith(".html") or msg.endswith("/"):
         file_type = "text/html"
     elif msg.lower().endswith(".txt") or msg.lower().endswith(".py"):
         file_type = "text/plain"
@@ -56,8 +58,16 @@ def response_ok(msg):
 
 def resolve_uri(uri):
     """Return a body of requested resource."""
-    root_dir = "../webroot"
-    uri = 
+    root_dir = "../webroot/"
+    if uri.endswith('/'):
+        # Return a directory HTML
+        pass
+    elif uri.split('/')[-1] in listdir(root_dir):
+        # Return the body of the file
+        the_file = root_dir + uri
+        return open(the_file, "rb").read()
+    else:
+        raise NameError('404 File Not Found')
 
 
 def response_error(code):
