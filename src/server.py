@@ -15,11 +15,13 @@ def server():  # pragma: no cover
             try:
                 conn, addr = echo_server_sock.accept()
                 buffsize = 8
-                response = ''
+                response = b''
                 keep_parsing = True
                 while keep_parsing:
-                    response += conn.recv(buffsize).decode('utf8')
-                    if response == '' or response.endswith('\r\n\r\n'):
+                    response += conn.recv(buffsize)
+                    temp_res = response.decode('utf8')
+                    if temp_res == '' or temp_res.endswith('\r\n\r\n'):
+                        response = response.decode('utf8')
                         keep_parsing = False
                 print(response)
                 try:

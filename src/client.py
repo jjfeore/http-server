@@ -13,11 +13,13 @@ def client(msg):
     msg = (msg + '\r\n\r\n').encode('utf8')
     cli_sock.sendall(msg)
     buffsize = 8
-    response = ''
+    response = b''
     keep_parsing = True
     while keep_parsing:
-        response += cli_sock.recv(buffsize).decode('utf8')
-        if response.endswith('\r\n\r\n'):
+        response += cli_sock.recv(buffsize)
+        temp_res = response.decode('utf8')
+        if temp_res.endswith('\r\n\r\n'):
+            response = response.decode('utf8')
             keep_parsing = False
     cli_sock.close()
     return response
