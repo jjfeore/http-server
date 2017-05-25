@@ -29,20 +29,26 @@ TEST_ERROR = [
 
 
 def test_client():
-    """Take a msg,send it, return that same message."""
+    """Take a msg,send it, return a well-formatted HTTP response."""
     from client import client
     assert client('GET google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message') == 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngoogle.com\r\n\r\n'
 
 
+def test_client_error():
+    """Take a bad msg,send it, receive the right error."""
+    from client import client
+    assert client('PUT google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message') == 'HTTP/1.1 405 Method Not Allowed\r\n\r\n'
+
+
 def test_parse_request():
-    """Take a msg,send it, return that same message."""
+    """Parse a good HTTP request."""
     from server import parse_request
     assert parse_request('GET google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message').decode('utf8') == 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngoogle.com\r\n\r\n'
 
 
 @pytest.mark.parametrize('msg', TEST_PARSE)
 def test_parse_request_err(msg):
-    """Take a msg,send it, return that same message."""
+    """Parse an error and return the right HTTP error response."""
     from server import parse_request
     with pytest.raises(ValueError):
         parse_request(msg)
@@ -50,7 +56,7 @@ def test_parse_request_err(msg):
 
 @pytest.mark.parametrize('msg, result', TEST_OK)
 def test_response_ok(msg, result):
-    """Take a msg,send it, return that same message."""
+    """Take a msg and receive a well-formatted HTTP 200 response."""
     from server import response_ok
     assert response_ok(msg) == result.encode('utf8')
 

@@ -30,7 +30,6 @@ def server():  # pragma: no cover
                 except ValueError as err:
                     conn.sendall(response_error(err.args[0]))
                     conn.close()
-                    pass
             except KeyboardInterrupt:
                 break
         echo_server_sock.close()
