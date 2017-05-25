@@ -3,6 +3,14 @@
 import pytest
 
 
+fa = open("../webroot/a_web_page.html", "rb").read()
+fb = open("../webroot/make_time.py", "rb").read()
+fc = open("../webroot/sample.txt", "rb").read()
+fd = open("../webroot/images/JPEG_example.jpg", "rb").read()
+fe = open("../webroot/images/sample_1.png", "rb").read()
+ff = open("../webroot/images/Sample_Scene_Balls.jpg", "rb").read()
+
+
 TEST_PARSE = [
     ('PUT google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message'),
     ('GET google.com Quack/1.0\r\nHost: localhost\r\n\r\nHere\'s a message'),
@@ -12,12 +20,12 @@ TEST_PARSE = [
 
 
 TEST_OK = [
-    ('hello', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nhello\r\n\r\n'),
-    ('buffsize', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nbuffsize\r\n\r\n'),
-    ('James Feore', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nJames Feore\r\n\r\n'),
-    ('Ophelia Yin', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nOphelia Yin\r\n\r\n'),
-    ('Testing testing testing', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nTesting testing testing\r\n\r\n'),
-    ('!@#$^^&', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n!@#$^^&\r\n\r\n')
+    ('a_web_page.html', 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 125\r\n\r\n' + fa),
+    ('make_time.py', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 278\r\n\r\n' + fb),
+    ('sample.txt', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 95\r\n\r\n\r\n' + fc),
+    ('images/JPEG_example.jpg', 'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 15138\r\n\r\n' + fd),
+    ('images/sample_1.png', 'HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 8760\r\n\r\n' + fe),
+    ('images/Sample_Scene_Balls.jpg', 'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 146534\r\n\r\n' + ff)
 ]
 
 

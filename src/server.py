@@ -1,6 +1,8 @@
 """Build Echo Server."""
 import socket
 import sys
+import io
+from os import listdir
 
 
 def server():  # pragma: no cover
@@ -38,8 +40,24 @@ def server():  # pragma: no cover
 
 def response_ok(msg):
     """Return a properly formatted HTTP 200 OK."""
-    msg = 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n' + msg + '\r\n\r\n'
+    body = resolve_uri(msg)
+    if msg.lower().endswith(".html") or not msg.includes("."):
+        file_type = "text/html"
+    elif msg.lower().endswith(".txt") or msg.lower().endswith(".py"):
+        file_type = "text/plain"
+    elif msg.lower().endswith(".jpg"):
+        file_type = "image/jpeg"
+    elif msg.lower().endswith(".png"):
+        file_type = "image/png"
+    body_len = str(len(body))
+    msg = 'HTTP/1.1 200 OK\r\nContent-Type: {}\r\nContent-Length: {}\r\n\r\n{}'.format(file_type, body, body_len)
     return msg.encode('utf8')
+
+
+def resolve_uri(uri):
+    """Return a body of requested resource."""
+    root_dir = "../webroot"
+    uri = 
 
 
 def response_error(code):
@@ -53,9 +71,9 @@ def parse_request(request):
     if request[0].startswith('GET'):
         if request[0].endswith('HTTP/1.1'):
             if request[1].startswith('Host: '):
-                ret_msg = request[0].replace('GET ', '').replace(' HTTP/1.1', '').replace('HTTP/1.1', '')
-                if ret_msg:
-                    return response_ok(ret_msg)
+                uri = request[0].replace('GET ', '').replace(' HTTP/1.1', '').replace('HTTP/1.1', '')
+                if uri:
+                    return response_ok(uri)
                 else:
                     raise ValueError('400 Bad Request')
             else:
