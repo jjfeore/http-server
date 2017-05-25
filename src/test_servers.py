@@ -4,11 +4,10 @@ import pytest
 
 
 TEST_PARSE = [
-    ('GET google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message', 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngoogle.com\r\n\r\n'),
-    ('PUT google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message', 'HTTP/1.1 405 Method Not Allowed\r\n\r\n'),
-    ('GET google.com Quack/1.0\r\nHost: localhost\r\n\r\nHere\'s a message', 'HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n'),
-    ('GET google.com HTTP/1.1\r\nHawaiian Host: chocolates\r\n\r\nHere\'s a message', 'HTTP/1.1 400 Bad Request\r\n\r\n'),
-    ('GET HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message', 'HTTP/1.1 400 Bad Request\r\n\r\n')
+    ('PUT google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message'),
+    ('GET google.com Quack/1.0\r\nHost: localhost\r\n\r\nHere\'s a message'),
+    ('GET google.com HTTP/1.1\r\nHawaiian Host: chocolates\r\n\r\nHere\'s a message'),
+    ('GET HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message')
 ]
 
 
@@ -29,18 +28,24 @@ TEST_ERROR = [
 ]
 
 
-@pytest.mark.parametrize('msg, result', TEST_PARSE)
-def test_client(msg, result):
+def test_client():
     """Take a msg,send it, return that same message."""
     from client import client
-    assert client(msg) == result
+    assert client('GET google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message') == 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngoogle.com\r\n\r\n'
 
 
-@pytest.mark.parametrize('msg, result', TEST_PARSE)
-def test_parse_request(msg, result):
+def test_parse_request():
     """Take a msg,send it, return that same message."""
     from server import parse_request
-    assert parse_request(msg) == result
+    assert parse_request('GET google.com HTTP/1.1\r\nHost: localhost\r\n\r\nHere\'s a message').decode('utf8') == 'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ngoogle.com\r\n\r\n'
+
+
+@pytest.mark.parametrize('msg', TEST_PARSE)
+def test_parse_request_err(msg):
+    """Take a msg,send it, return that same message."""
+    from server import parse_request
+    with pytest.raises(ValueError):
+        parse_request(msg)
 
 
 @pytest.mark.parametrize('msg, result', TEST_OK)

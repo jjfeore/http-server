@@ -8,7 +8,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5002)
+        address = ('127.0.0.1', 5003)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
@@ -52,7 +52,7 @@ def parse_request(request):
     if request[0].startswith('GET'):
         if request[0].endswith('HTTP/1.1'):
             if request[1].startswith('Host: '):
-                ret_msg = request[0].replace('GET ', '').replace(' HTTP/1.1', '')
+                ret_msg = request[0].replace('GET ', '').replace(' HTTP/1.1', '').replace('HTTP/1.1', '')
                 if ret_msg:
                     return response_ok(ret_msg)
                 else:
