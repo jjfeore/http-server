@@ -55,7 +55,7 @@ def resolve_uri(uri):
     if path.isdir(the_file):
         # Partially stolen from Stack Overflow and rewritten heavily
         file_dir = []
-        for dp, dn, fn in walk(file_path):
+        for dp, dn, fn in walk(the_file):
             for f in fn:
                 file_dir.append(path.join(dp, f).replace(file_path, ''))
         html_start = '<!DOCTYPE html><html><body><h1>File Directory</h1><ul>'
