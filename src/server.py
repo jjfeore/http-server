@@ -9,7 +9,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5004)
+        address = ('127.0.0.1', 5000)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
@@ -39,41 +39,48 @@ def server():  # pragma: no cover
         sys.exit(0)
 
 
-def response_ok(msg):
+def response_ok(uri):
     """Return a properly formatted HTTP 200 OK."""
-    body = resolve_uri(msg)
-    if msg.lower().endswith(".html") or msg.endswith("/"):
-        file_type = "text/html"
-    elif msg.lower().endswith(".txt") or msg.lower().endswith(".py"):
-        file_type = "text/plain"
-    elif msg.lower().endswith(".jpg"):
-        file_type = "image/jpeg"
-    elif msg.lower().endswith(".png"):
-        file_type = "image/png"
-    body_len = str(len(body))
-    msg = 'HTTP/1.1 200 OK\r\nContent-Type: {}\r\nContent-Length: {}\r\n\r\n{}'.format(file_type, body_len, body)
-    return msg.encode('utf8')
+    file_type, body_len, body = resolve_uri(uri)
+    msg = b'HTTP/1.1 200 OK\r\nContent-Type: ' + file_type.encode('utf8') + b'\r\nContent-Length: ' + str(body_len).encode('utf8') + b'\r\n\r\n' + body
+    return msg
 
 
 def resolve_uri(uri):
     """Return a body of requested resource."""
-    root_dir = "../webroot/"
-    if uri.endswith('/'):
+    if uri.startswith('/'):
+        uri = uri[1:]
+    file_path = path.realpath(__file__).replace('server.py', '../webroot')
+    the_file = path.join(file_path, uri)
+    if path.isdir(the_file):
         # Partially stolen from Stack Overflow and rewritten heavily
         file_dir = []
-        for dp, dn, fn in walk('../webroot/'):
+        for dp, dn, fn in walk(file_path):
             for f in fn:
-                file_dir.append(path.join(dp, f).replace(root_dir, ''))
+                file_dir.append(path.join(dp, f).replace(file_path, ''))
         html_start = '<!DOCTYPE html><html><body><h1>File Directory</h1><ul>'
         html_end = '</ul></body></html>'
         for file in file_dir:
             html_start += '<li>{}</li>'.format(file)
-        return html_start + html_end
-    elif path.isfile(root_dir + uri):
-        the_file = root_dir + uri
-        return open(the_file, "rb").read().decode('utf8')
+        the_body = (html_start + html_end).encode('utf8')
+        file_size = len(the_body)
+        file_type = 'text/html; charset=utf-8'
+    elif path.isfile(the_file):
+        file_size = path.getsize(the_file)
+        the_body = open(the_file, "rb").read()
+        if uri.lower().endswith(".html"):
+            file_type = "text/html; charset=utf-8"
+        elif uri.lower().endswith(".txt"):
+            file_type = "text/plain; charset=utf-8"
+        elif uri.lower().endswith('.py'):
+            file_type = 'text/python'
+        elif uri.lower().endswith(".jpg"):
+            file_type = "image/jpeg"
+        elif uri.lower().endswith(".png"):
+            file_type = "image/png"
     else:
         raise NameError('404 File Not Found')
+    return file_type, file_size, the_body
 
 
 def response_error(code):

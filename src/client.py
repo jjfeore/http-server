@@ -6,11 +6,11 @@ import socket
 
 def client(msg):
     """Send server a message, receives another msg, and returns it."""
-    infos = socket.getaddrinfo('127.0.0.1', 5004)
+    infos = socket.getaddrinfo('127.0.0.1', 5000)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
     cli_sock = socket.socket(*stream_info[:3])
     cli_sock.connect(stream_info[-1])
-    msg = (msg + '\r\n\r\n').encode('utf8')
+    msg = msg.encode('utf8')
     cli_sock.sendall(msg)
     buffsize = 8
     response = b''
