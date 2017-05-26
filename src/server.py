@@ -1,7 +1,7 @@
 """Build Echo Server."""
 import socket
 import sys
-from os import listdir
+from os import walk, path
 
 
 def server():  # pragma: no cover
@@ -9,7 +9,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5003)
+        address = ('127.0.0.1', 5004)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
@@ -17,13 +17,12 @@ def server():  # pragma: no cover
                 conn, addr = echo_server_sock.accept()
                 buffsize = 8
                 response = b''
-                keep_parsing = True
-                while keep_parsing:
+                while True:
                     response += conn.recv(buffsize)
                     temp_res = response.decode('utf8')
                     if temp_res == '' or temp_res.endswith('\r\n\r\n'):
                         response = response.decode('utf8')
-                        keep_parsing = False
+                        break
                 print(response)
                 try:
                     conn.sendall(parse_request(response))
@@ -52,7 +51,7 @@ def response_ok(msg):
     elif msg.lower().endswith(".png"):
         file_type = "image/png"
     body_len = str(len(body))
-    msg = 'HTTP/1.1 200 OK\r\nContent-Type: {}\r\nContent-Length: {}\r\n\r\n{}'.format(file_type, body, body_len)
+    msg = 'HTTP/1.1 200 OK\r\nContent-Type: {}\r\nContent-Length: {}\r\n\r\n{}'.format(file_type, body_len, body)
     return msg.encode('utf8')
 
 
@@ -60,12 +59,19 @@ def resolve_uri(uri):
     """Return a body of requested resource."""
     root_dir = "../webroot/"
     if uri.endswith('/'):
-        # Return a directory HTML
-        pass
-    elif uri.split('/')[-1] in listdir(root_dir):
-        # Return the body of the file
+        # Partially stolen from Stack Overflow and rewritten heavily
+        file_dir = []
+        for dp, dn, fn in walk('../webroot/'):
+            for f in fn:
+                file_dir.append(path.join(dp, f).replace(root_dir, ''))
+        html_start = '<!DOCTYPE html><html><body><h1>File Directory</h1><ul>'
+        html_end = '</ul></body></html>'
+        for file in file_dir:
+            html_start += '<li>{}</li>'.format(file)
+        return html_start + html_end
+    elif path.isfile(root_dir + uri):
         the_file = root_dir + uri
-        return open(the_file, "rb").read()
+        return open(the_file, "rb").read().decode('utf8')
     else:
         raise NameError('404 File Not Found')
 
