@@ -23,11 +23,11 @@ ff = open("webroot/images/Sample_Scene_Balls.jpg", "rb").read()
 TEST_OK = [
     ('a_web_page.html', b'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: 125\r\n\r\n' + fa),
     ('make_time.py', b'HTTP/1.1 200 OK\r\nContent-Type: text/python\r\nContent-Length: 278\r\n\r\n' + fb),
-    ('sample.txt', b'HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 95\r\n\r\n' + fc)
-    # ('images/JPEG_example.jpg', b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 15138\r\n\r\n' + fd),
-    # ('images/sample_1.png', b'HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 8760\r\n\r\n' + fe),
-    # ('images/Sample_Scene_Balls.jpg', b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 146534\r\n\r\n' + ff),
-    # ('/images/Sample_Scene_Balls.jpg', b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 146534\r\n\r\n' + ff)
+    ('sample.txt', b'HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 95\r\n\r\n' + fc),
+    ('images/JPEG_example.jpg', b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 15138\r\n\r\n' + fd),
+    ('images/sample_1.png', b'HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 8760\r\n\r\n' + fe),
+    ('images/Sample_Scene_Balls.jpg', b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 146534\r\n\r\n' + ff),
+    ('/images/Sample_Scene_Balls.jpg', b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 146534\r\n\r\n' + ff)
 ]
 
 
@@ -42,7 +42,7 @@ TEST_OK = [
 def test_client(uri, result):
     """Take a URI, send it, return a well-formatted HTTP response."""
     from client import client
-    assert client('GET {} HTTP/1.1\r\nHost: localhost\r\n\r\n'.format(uri)).encode('utf8') == result
+    assert client('GET {} HTTP/1.1\r\nHost: localhost\r\n\r\n'.format(uri)) == result
 
 
 # def test_client_error():

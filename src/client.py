@@ -13,17 +13,15 @@ def client(msg):
     msg = msg.encode('utf8')
     cli_sock.sendall(msg)
     buffsize = 8
-    response = b''
+    response = ''.encode('utf8')
     while True:
         response += cli_sock.recv(buffsize)
-        temp_res = response.decode('utf8')
-        if '\r\n\r\n' in temp_res and '200' not in temp_res.split('\r\n')[0]:
-            response = temp_res
+        temp_res = response
+        if b'\r\n\r\n' in temp_res and b'200' not in temp_res.split(b'\r\n')[0]:
             break
-        elif '\r\n\r\n' in temp_res and 'Content-Length: ' in temp_res:
-            msg_len = int(temp_res.split('Content-Length: ')[1].split('\r\n')[0])
-            if len(temp_res.split('\r\n\r\n')[1]) >= msg_len:
-                response = temp_res
+        elif b'\r\n\r\n' in temp_res and b'Content-Length: ' in temp_res:
+            msg_len = int(temp_res.split(b'Content-Length: ')[1].split(b'\r\n')[0])
+            if len(temp_res.split(b'\r\n\r\n')[1]) >= msg_len:
                 break
     cli_sock.close()
     return response
