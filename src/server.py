@@ -9,7 +9,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5000)
+        address = ('127.0.0.1', 5002)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
