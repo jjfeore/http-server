@@ -9,7 +9,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5002)
+        address = ('127.0.0.1', 5000)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
@@ -52,6 +52,7 @@ def resolve_uri(uri):
         uri = uri[1:]
     file_path = path.realpath(__file__).replace('server.py', '../webroot')
     the_file = path.join(file_path, uri)
+    print(the_file)
     if path.isdir(the_file):
         # Partially stolen from Stack Overflow and rewritten heavily
         file_dir = []
@@ -67,7 +68,9 @@ def resolve_uri(uri):
         file_type = 'text/html; charset=utf-8'
     elif path.isfile(the_file):
         file_size = path.getsize(the_file)
-        the_body = open(the_file, "rb").read()
+        with open(the_file, "rb") as output:
+            the_body = output.read()
+            output.close()
         if uri.lower().endswith(".html"):
             file_type = "text/html; charset=utf-8"
         elif uri.lower().endswith(".txt"):
