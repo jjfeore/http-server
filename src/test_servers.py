@@ -7,6 +7,7 @@ TEST_PARSE = [
     ('PUT google.com HTTP/1.1\r\nHost: localhost\r\n\r\n', ValueError),
     ('GET google.com Quack/1.0\r\nHost: localhost\r\n\r\n', ValueError),
     ('GET google.com HTTP/1.1\r\nHawaiian Host: chocolates\r\n\r\n', ValueError),
+    ('GET barf.jpg HTTP/1.1\r\nlocalhost\r\n\r\n', ValueError),
     ('GET HTTP/1.1\r\nHost: localhost\r\n\r\n', ValueError),
     ('GET james.txt HTTP/1.1\r\nHost: localhost\r\n\r\n', NameError)
 ]
