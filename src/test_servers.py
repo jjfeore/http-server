@@ -16,7 +16,6 @@ TEST_OK = [
     ('a_web_page.html', b'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: 125\r\n\r\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1>Code Fellows</h1>\n\n<p>A fine place to learn Python web programming!</p>\n\n</body>\n</html>\n\n'),
     ('make_time.py', b'HTTP/1.1 200 OK\r\nContent-Type: text/python\r\nContent-Length: 278\r\n\r\n#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n""" % time_str\n\nprint(html)\n'),
     ('sample.txt', b'HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 95\r\n\r\nThis is a very simple text file.\nJust to show that we can serve it up.\nIt is three lines long.\n'),
-    ('/sample.txt', b'HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 95\r\n\r\nThis is a very simple text file.\nJust to show that we can serve it up.\nIt is three lines long.\n'),
     ('images', b'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: 174\r\n\r\n<!DOCTYPE html><html><body><h1>File Directory</h1><ul><li>/images/Sample_Scene_Balls.jpg</li><li>/images/sample_1.png</li><li>/images/JPEG_example.jpg</li></ul></body></html>')
 ]
 

@@ -9,7 +9,7 @@ def server():  # pragma: no cover
         echo_server_sock = socket.socket(socket.AF_INET,
                                          socket.SOCK_STREAM,
                                          socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5000)
+        address = ('127.0.0.1', 5002)
         echo_server_sock.bind(address)
         echo_server_sock.listen(1)
         while True:
@@ -48,8 +48,6 @@ def response_ok(uri):
 
 def resolve_uri(uri):
     """Return a body of requested resource."""
-    if uri.startswith('/'):
-        uri = uri[1:]
     file_path = path.realpath(__file__).replace('server.py', '../webroot')
     the_file = path.join(file_path, uri)
     print(the_file)
@@ -81,8 +79,6 @@ def resolve_uri(uri):
             file_type = "image/jpeg"
         elif uri.lower().endswith(".png"):
             file_type = "image/png"
-    else:
-        raise NameError('404 File Not Found')
     return file_type, file_size, the_body
 
 
@@ -99,7 +95,13 @@ def parse_request(request):
             if request[1].startswith('Host: '):
                 uri = request[0].replace('GET ', '').replace(' HTTP/1.1', '').replace('HTTP/1.1', '')
                 if uri:
-                    return response_ok(uri)
+                    if uri.startswith('/'):
+                        uri = uri[1:]
+                    the_file = path.realpath(__file__).replace('server.py', '../webroot/') + uri
+                    if path.isdir(the_file) or path.isfile(the_file):
+                        return response_ok(uri)
+                    else:
+                        raise NameError('404 File Not Found')
                 else:
                     raise ValueError('400 Bad Request')
             else:
