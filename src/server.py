@@ -1,20 +1,11 @@
 """Build Echo Server."""
-import socket
-import sys
 from os import walk, path
 
 
-def server():  # pragma: no cover
+def con_server(conn, addr):  # pragma: no cover
         """Echo server."""
-        echo_server_sock = socket.socket(socket.AF_INET,
-                                         socket.SOCK_STREAM,
-                                         socket.IPPROTO_TCP)
-        address = ('127.0.0.1', 5002)
-        echo_server_sock.bind(address)
-        echo_server_sock.listen(1)
         while True:
             try:
-                conn, addr = echo_server_sock.accept()
                 buffsize = 8
                 response = b''
                 while True:
@@ -35,8 +26,6 @@ def server():  # pragma: no cover
                     conn.close()
             except KeyboardInterrupt:
                 break
-        echo_server_sock.close()
-        sys.exit(0)
 
 
 def response_ok(uri):
@@ -113,4 +102,9 @@ def parse_request(request):
 
 
 if __name__ == "__main__":  # pragma: no cover
-    server()
+    from gevent.server import StreamServer
+    from gevent.monkey import patch_all
+    patch_all()
+    server = StreamServer(('127.0.0.1', 10000), con_server)
+    print('Starting echo server on port 10000')
+    server.serve_forever()
